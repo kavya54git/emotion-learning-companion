@@ -155,7 +155,8 @@
         var header = document.getElementById('emotion-header');
         header.className = 'emotion-header ' + emotionClass;
         document.getElementById('emotion-icon').textContent = data.emoji;
-        document.getElementById('emotion-title').textContent = 'Feeling ' + data.emotion.charAt(0).toUpperCase() + data.emotion.slice(1);
+        var em = data.emotion || 'unknown';
+        document.getElementById('emotion-title').textContent = 'Feeling ' + em.charAt(0).toUpperCase() + em.slice(1);
         document.getElementById('emotion-msg').textContent = data.emotionMessage;
         document.getElementById('teaching').innerHTML = data.teaching.replace(/\n/g, '<br>');
         document.getElementById('tip').textContent = data.tip;
