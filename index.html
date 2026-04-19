@@ -8,454 +8,90 @@
   <style>
     :root {
       --bg: #070710;
-      --bg2: #0d0d1a;
       --card: #11111f;
       --border: #1e1e3a;
       --purple: #7c3aed;
       --purple-light: #a855f7;
-      --purple-glow: #6d28d9;
-      --pink: #ec4899;
       --cyan: #06b6d4;
       --text: #e2e0ff;
       --text-muted: #6b6a8a;
       --text-dim: #9d9bbf;
     }
-
     * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    /* Animated background */
-    body::before {
-      content: '';
-      position: fixed;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: 
-        radial-gradient(ellipse at 20% 20%, rgba(124,58,237,0.12) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 80%, rgba(168,85,247,0.08) 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 50%, rgba(6,182,212,0.04) 0%, transparent 60%);
-      animation: bgPulse 8s ease-in-out infinite alternate;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    @keyframes bgPulse {
-      0% { transform: translate(0, 0) rotate(0deg); }
-      100% { transform: translate(2%, 2%) rotate(1deg); }
-    }
-
-    /* Grid texture */
-    body::after {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: 
-        linear-gradient(rgba(124,58,237,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(124,58,237,0.03) 1px, transparent 1px);
-      background-size: 40px 40px;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .wrapper {
-      position: relative;
-      z-index: 1;
-      max-width: 780px;
-      margin: 0 auto;
-      padding: 48px 24px;
-    }
-
-    /* Header */
-    .header {
-      text-align: center;
-      margin-bottom: 48px;
-      animation: fadeDown 0.8s ease forwards;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(124,58,237,0.15);
-      border: 1px solid rgba(124,58,237,0.3);
-      border-radius: 100px;
-      padding: 6px 16px;
-      font-size: 0.75rem;
-      font-weight: 500;
-      color: var(--purple-light);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      margin-bottom: 20px;
-    }
-
-    .badge::before {
-      content: '';
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--purple-light);
-      box-shadow: 0 0 8px var(--purple-light);
-      animation: blink 2s ease infinite;
-    }
-
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
-    }
-
-    h1 {
-      font-family: 'Syne', sans-serif;
-      font-size: clamp(2rem, 5vw, 3rem);
-      font-weight: 800;
-      line-height: 1.1;
-      letter-spacing: -0.03em;
-      margin-bottom: 12px;
-    }
-
-    h1 span {
-      background: linear-gradient(135deg, #a855f7 0%, #ec4899 50%, #06b6d4 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .subtitle {
-      color: var(--text-dim);
-      font-size: 1rem;
-      font-weight: 300;
-      letter-spacing: 0.02em;
-    }
-
-    /* Card */
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 32px;
-      margin-bottom: 20px;
-      position: relative;
-      overflow: hidden;
-      animation: fadeUp 0.8s ease forwards;
-    }
-
-    .card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(124,58,237,0.5), transparent);
-    }
-
-    /* Form elements */
-    .field {
-      margin-bottom: 20px;
-    }
-
-    label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.8rem;
-      font-weight: 500;
-      color: var(--text-dim);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: 8px;
-    }
-
-    label .icon {
-      width: 18px;
-      height: 18px;
-      background: rgba(124,58,237,0.2);
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.7rem;
-    }
-
-    input, select, textarea {
-      width: 100%;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px 16px;
-      color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.95rem;
-      outline: none;
-      transition: all 0.3s ease;
-      appearance: none;
-    }
-
-    input::placeholder, textarea::placeholder {
-      color: var(--text-muted);
-    }
-
-    input:focus, select:focus, textarea:focus {
-      border-color: rgba(124,58,237,0.6);
-      background: rgba(124,58,237,0.05);
-      box-shadow: 0 0 0 3px rgba(124,58,237,0.1);
-    }
-
-    select {
-      cursor: pointer;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b6a8a' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 16px center;
-      padding-right: 40px;
-    }
-
-    select option {
-      background: #1a1a2e;
-      color: var(--text);
-    }
-
-    textarea {
-      height: 110px;
-      resize: none;
-      line-height: 1.6;
-    }
-
-    /* Emotion pills */
-    .emotion-hints {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 20px;
-    }
-
-    .hint-label {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      width: 100%;
-      margin-bottom: 4px;
-    }
-
-    .pill {
-      padding: 5px 12px;
-      border-radius: 100px;
-      font-size: 0.78rem;
-      border: 1px solid var(--border);
-      color: var(--text-muted);
-      cursor: pointer;
-      transition: all 0.2s;
-      background: transparent;
-    }
-
-    .pill:hover {
-      border-color: var(--purple);
-      color: var(--purple-light);
-      background: rgba(124,58,237,0.1);
-    }
-
-    /* Button */
-    .btn {
-      width: 100%;
-      padding: 16px;
-      background: linear-gradient(135deg, var(--purple) 0%, #9333ea 100%);
-      border: none;
-      border-radius: 12px;
-      color: white;
-      font-family: 'Syne', sans-serif;
-      font-size: 1rem;
-      font-weight: 700;
-      letter-spacing: 0.02em;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .btn::before {
-      content: '';
-      position: absolute;
-      top: 0; left: -100%;
-      width: 100%; height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-      transition: left 0.5s ease;
-    }
-
-    .btn:hover::before { left: 100%; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+    body::before { content: ''; position: fixed; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(ellipse at 20% 20%, rgba(124,58,237,0.12) 0%, transparent 50%), radial-gradient(ellipse at 80% 80%, rgba(168,85,247,0.08) 0%, transparent 50%); animation: bgPulse 8s ease-in-out infinite alternate; pointer-events: none; z-index: 0; }
+    @keyframes bgPulse { 0% { transform: translate(0,0); } 100% { transform: translate(2%,2%); } }
+    body::after { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(124,58,237,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(124,58,237,0.03) 1px, transparent 1px); background-size: 40px 40px; pointer-events: none; z-index: 0; }
+    .wrapper { position: relative; z-index: 1; max-width: 780px; margin: 0 auto; padding: 48px 24px; }
+    .header { text-align: center; margin-bottom: 48px; animation: fadeDown 0.8s ease forwards; }
+    .badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(124,58,237,0.15); border: 1px solid rgba(124,58,237,0.3); border-radius: 100px; padding: 6px 16px; font-size: 0.75rem; font-weight: 500; color: var(--purple-light); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 20px; }
+    .badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--purple-light); box-shadow: 0 0 8px var(--purple-light); animation: blink 2s ease infinite; }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+    h1 { font-family: 'Syne', sans-serif; font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 12px; }
+    h1 span { background: linear-gradient(135deg, #a855f7 0%, #ec4899 50%, #06b6d4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .subtitle { color: var(--text-dim); font-size: 1rem; font-weight: 300; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 32px; margin-bottom: 20px; position: relative; overflow: hidden; animation: fadeUp 0.8s ease forwards; }
+    .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(124,58,237,0.5), transparent); }
+    .field { margin-bottom: 20px; }
+    label { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; font-weight: 500; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+    label .icon { width: 18px; height: 18px; background: rgba(124,58,237,0.2); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; }
+    input, select, textarea { width: 100%; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.95rem; outline: none; transition: all 0.3s ease; appearance: none; }
+    input::placeholder, textarea::placeholder { color: var(--text-muted); }
+    input:focus, select:focus, textarea:focus { border-color: rgba(124,58,237,0.6); background: rgba(124,58,237,0.05); box-shadow: 0 0 0 3px rgba(124,58,237,0.1); }
+    select { cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b6a8a' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; padding-right: 40px; }
+    select option { background: #1a1a2e; color: var(--text); }
+    textarea { height: 110px; resize: none; line-height: 1.6; }
+    .emotion-hints { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+    .hint-label { font-size: 0.75rem; color: var(--text-muted); width: 100%; margin-bottom: 4px; }
+    .pill { padding: 5px 12px; border-radius: 100px; font-size: 0.78rem; border: 1px solid var(--border); color: var(--text-muted); cursor: pointer; transition: all 0.2s; background: transparent; }
+    .pill:hover { border-color: var(--purple); color: var(--purple-light); background: rgba(124,58,237,0.1); }
+    .btn { width: 100%; padding: 16px; background: linear-gradient(135deg, var(--purple) 0%, #9333ea 100%); border: none; border-radius: 12px; color: white; font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden; }
     .btn:hover { transform: translateY(-1px); box-shadow: 0 8px 32px rgba(124,58,237,0.4); }
-    .btn:active { transform: translateY(0); }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-    /* Loader */
-    .loader {
-      display: none;
-      text-align: center;
-      padding: 16px;
-      color: var(--text-muted);
-      font-size: 0.9rem;
-    }
-
-    .loader-dots {
-      display: inline-flex;
-      gap: 4px;
-      margin-right: 8px;
-    }
-
-    .loader-dots span {
-      width: 5px; height: 5px;
-      border-radius: 50%;
-      background: var(--purple-light);
-      animation: dot 1.2s ease infinite;
-    }
-
+    .loader { display: none; text-align: center; padding: 16px; color: var(--text-muted); font-size: 0.9rem; }
+    .loader-dots { display: inline-flex; gap: 4px; margin-right: 8px; }
+    .loader-dots span { width: 5px; height: 5px; border-radius: 50%; background: var(--purple-light); animation: dot 1.2s ease infinite; }
     .loader-dots span:nth-child(2) { animation-delay: 0.2s; }
     .loader-dots span:nth-child(3) { animation-delay: 0.4s; }
-
-    @keyframes dot {
-      0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
-      40% { transform: scale(1); opacity: 1; }
-    }
-
-    /* Result card */
-    .result-card {
-      display: none;
-      animation: fadeUp 0.5s ease forwards;
-    }
-
-    .emotion-header {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 24px;
-      padding-bottom: 24px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .emotion-icon {
-      width: 56px;
-      height: 56px;
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.8rem;
-      flex-shrink: 0;
-    }
-
-    .emotion-info h3 {
-      font-family: 'Syne', sans-serif;
-      font-size: 1.1rem;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-
-    .emotion-info p {
-      font-size: 0.88rem;
-      color: var(--text-dim);
-      line-height: 1.5;
-      font-style: italic;
-    }
-
-    .section-label {
-      font-size: 0.72rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--purple-light);
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .section-label::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: linear-gradient(90deg, rgba(168,85,247,0.3), transparent);
-    }
-
-    .teaching-box {
-      background: rgba(124,58,237,0.06);
-      border: 1px solid rgba(124,58,237,0.2);
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 16px;
-      line-height: 1.75;
-      font-size: 0.95rem;
-      color: var(--text);
-    }
-
-    .tip-box {
-      background: rgba(6,182,212,0.06);
-      border: 1px solid rgba(6,182,212,0.2);
-      border-radius: 12px;
-      padding: 16px 20px;
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      font-size: 0.9rem;
-      color: var(--text-dim);
-      line-height: 1.6;
-    }
-
-    .tip-icon {
-      font-size: 1.1rem;
-      flex-shrink: 0;
-      margin-top: 1px;
-    }
-
-    /* Emotion colors */
+    @keyframes dot { 0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; } 40% { transform: scale(1); opacity: 1; } }
+    .result-card { display: none; animation: fadeUp 0.5s ease forwards; }
+    .emotion-header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
+    .emotion-icon { width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; flex-shrink: 0; }
+    .emotion-info h3 { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
+    .emotion-info p { font-size: 0.88rem; color: var(--text-dim); line-height: 1.5; font-style: italic; }
+    .section-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--purple-light); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+    .section-label::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, rgba(168,85,247,0.3), transparent); }
+    .teaching-box { background: rgba(124,58,237,0.06); border: 1px solid rgba(124,58,237,0.2); border-radius: 12px; padding: 20px; margin-bottom: 16px; line-height: 1.75; font-size: 0.95rem; color: var(--text); }
+    .tip-box { background: rgba(6,182,212,0.06); border: 1px solid rgba(6,182,212,0.2); border-radius: 12px; padding: 16px 20px; display: flex; align-items: flex-start; gap: 12px; font-size: 0.9rem; color: var(--text-dim); line-height: 1.6; }
+    .tip-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
     .e-stressed .emotion-icon { background: rgba(239,68,68,0.15); }
     .e-frustrated .emotion-icon { background: rgba(249,115,22,0.15); }
     .e-confused .emotion-icon { background: rgba(59,130,246,0.15); }
     .e-bored .emotion-icon { background: rgba(34,197,94,0.15); }
     .e-happy .emotion-icon { background: rgba(234,179,8,0.15); }
     .e-confident .emotion-icon { background: rgba(168,85,247,0.15); }
-
     .e-stressed .emotion-info h3 { color: #f87171; }
     .e-frustrated .emotion-info h3 { color: #fb923c; }
     .e-confused .emotion-info h3 { color: #60a5fa; }
     .e-bored .emotion-info h3 { color: #4ade80; }
     .e-happy .emotion-info h3 { color: #facc15; }
     .e-confident .emotion-info h3 { color: #c084fc; }
-
-    /* Animations */
-    @keyframes fadeDown {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Footer */
-
+    @keyframes fadeDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
 <body>
   <div class="wrapper">
-
     <div class="header">
       <div class="badge">AI-Powered Learning</div>
       <h1>Emotion-Aware<br><span>Learning Companion</span></h1>
       <p class="subtitle">AI that reads your mood and teaches the way you need right now</p>
     </div>
-
     <div class="card">
       <div class="field">
         <label><span class="icon">📚</span> Subject</label>
         <input type="text" id="subject" placeholder="e.g. Mathematics, Physics, Chemistry..." />
       </div>
-
       <div class="field">
         <label><span class="icon">🎓</span> Your Level</label>
         <select id="level">
@@ -464,27 +100,24 @@
           <option value="competitive exam student">Competitive Exam (JEE/NEET/UPSC)</option>
         </select>
       </div>
-
       <div class="field">
         <label><span class="icon">💬</span> How are you feeling?</label>
         <div class="emotion-hints">
           <span class="hint-label">Quick fill →</span>
           <button class="pill" onclick="fillText('I am so stressed, exams are tomorrow and I have not studied anything')">😰 Stressed</button>
-          <button class="pill" onclick="fillText('I have been trying this for hours and still don\'t get it, so frustrated')">😤 Frustrated</button>
+          <button class="pill" onclick="fillText('I have been trying this for hours and still dont get it, so frustrated')">😤 Frustrated</button>
           <button class="pill" onclick="fillText('I am completely confused, nothing makes sense to me')">😕 Confused</button>
           <button class="pill" onclick="fillText('I am bored of studying the same thing again and again')">😴 Bored</button>
           <button class="pill" onclick="fillText('I am feeling great today and ready to learn something new!')">😊 Happy</button>
         </div>
         <textarea id="message" placeholder="Tell me how you're feeling and what you need help with..."></textarea>
       </div>
-
       <button class="btn" onclick="analyze()" id="btn">✦ Get Personalized Help</button>
       <div class="loader" id="loader">
         <div class="loader-dots"><span></span><span></span><span></span></div>
         Detecting your emotion and adapting response...
       </div>
     </div>
-
     <div class="card result-card" id="result">
       <div class="emotion-header" id="emotion-header">
         <div class="emotion-icon" id="emotion-icon"></div>
@@ -493,63 +126,41 @@
           <p id="emotion-msg"></p>
         </div>
       </div>
-
       <div class="section-label">Personalized Teaching</div>
       <div class="teaching-box" id="teaching"></div>
-
       <div class="section-label">Pro Tip</div>
       <div class="tip-box">
         <span class="tip-icon">💡</span>
         <span id="tip"></span>
       </div>
     </div>
-
-
   </div>
-
   <script>
     function fillText(text) {
       document.getElementById('message').value = text;
       document.getElementById('message').focus();
     }
-
     async function analyze() {
-      const subject = document.getElementById('subject').value.trim();
-      const level = document.getElementById('level').value;
-      const message = document.getElementById('message').value.trim();
-
-      if (!subject || !message) {
-        alert('Please fill in subject and your message!');
-        return;
-      }
-
+      var subject = document.getElementById('subject').value.trim();
+      var level = document.getElementById('level').value;
+      var message = document.getElementById('message').value.trim();
+      if (!subject || !message) { alert('Please fill in subject and your message!'); return; }
       document.getElementById('btn').disabled = true;
       document.getElementById('loader').style.display = 'block';
       document.getElementById('result').style.display = 'none';
-
       try {
-        const res = await fetch('/analyze', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message, subject, level })
-        });
-        const data = await res.json();
-
-        const emotionClass = `e-${data.emotion}`;
-        const header = document.getElementById('emotion-header');
-        header.className = `emotion-header ${emotionClass}`;
-
+        var res = await fetch('/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: message, subject: subject, level: level }) });
+        var data = await res.json();
+        var emotionClass = 'e-' + data.emotion;
+        var header = document.getElementById('emotion-header');
+        header.className = 'emotion-header ' + emotionClass;
         document.getElementById('emotion-icon').textContent = data.emoji;
-        document.getElementById('emotion-title').textContent = `Feeling ${data.emotion.charAt(0).toUpperCase() + data.emotion.slice(1)}`;
+        document.getElementById('emotion-title').textContent = 'Feeling ' + data.emotion.charAt(0).toUpperCase() + data.emotion.slice(1);
         document.getElementById('emotion-msg').textContent = data.emotionMessage;
         document.getElementById('teaching').innerHTML = data.teaching.replace(/\n/g, '<br>');
         document.getElementById('tip').textContent = data.tip;
-
         document.getElementById('result').style.display = 'block';
-      } catch (err) {
-        alert('Error: ' + err.message);
-      }
-
+      } catch(err) { alert('Error: ' + err.message); }
       document.getElementById('btn').disabled = false;
       document.getElementById('loader').style.display = 'none';
     }
