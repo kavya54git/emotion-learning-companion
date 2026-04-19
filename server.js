@@ -8,7 +8,7 @@ app.use(express.static('.'));
 
 app.post('/analyze', async (req, res) => {
   const { message, subject, level } = req.body;
-  const prompt = 'You are an Emotion-Aware Learning Companion. Student message: ' + message + ' Subject: ' + subject + ' Level: ' + level + ' Detect emotion (stressed/frustrated/confused/bored/happy/confident). Reply ONLY in this exact JSON format with no extra text: {"emotion":"frustrated","emoji":"😤","emotionMessage":"your message here","teaching":"your teaching here","tip":"your tip here"}';
+  const prompt = 'You are an Emotion-Aware Learning Companion. Student message: ' + message + ' Subject: ' + subject + ' Level: ' + level + '. Reply ONLY in this exact JSON with no extra text no markdown: {"emotion":"frustrated","emoji":"😤","emotionMessage":"short empathy message","teaching":"detailed teaching response","tip":"short tip"}';
   
   try {
     const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=AIzaSyCGr4hcWYZNqzGgF2Zgnd24XoLau-D1GtI', {
@@ -17,12 +17,18 @@ app.post('/analyze', async (req, res) => {
       body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
     });
     const data = await response.json();
-    console.log('Response:', JSON.stringify(data));
+    console.log('Raw:', JSON.stringify(data));
     const text = data.candidates[0].content.parts[0].text;
+    console.log('Text:', text);
     const clean = text.replace(/```json|```/g, '').trim();
     const parsed = JSON.parse(clean);
-    if (!parsed.emotion) parsed.emotion = 'confused';
-    res.json(parsed);
+    res.json({
+      emotion: parsed.emotion || 'confused',
+      emoji: parsed.emoji || '🤔',
+      emotionMessage: parsed.emotionMessage || parsed.emotion_message || parsed.message || 'I understand how you feel!',
+      teaching: parsed.teaching || parsed.response || parsed.content || 'Let me help you with this topic.',
+      tip: parsed.tip || parsed.advice || 'Keep going, you can do it!'
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message });
