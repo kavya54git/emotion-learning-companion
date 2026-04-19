@@ -11,7 +11,7 @@ app.post('/analyze', async (req, res) => {
   const prompt = `A student is studying ${subject} at ${level} level. They said: "${message}". Detect their emotion and help them. You MUST respond with ONLY this JSON object, no other text: {"emotion":"confused","emoji":"😕","emotionMessage":"I understand how you feel","teaching":"Here is my explanation","tip":"Here is my tip"}`;
   
   try {
-    const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=AIzaSyDEE89atBY9Wd2el__4Zbug2-MA9c2xw7c', {
+    const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=AIzaSyDFLnZnUXJ1J0Pow9q4-PiCWvugkHkLZuo', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
