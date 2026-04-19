@@ -8,29 +8,42 @@ app.use(express.static('.'));
 
 app.post('/analyze', async (req, res) => {
   const { message, subject, level } = req.body;
-  const prompt = 'You are an Emotion-Aware Learning Companion. Student message: ' + message + ' Subject: ' + subject + ' Level: ' + level + '. Reply ONLY in this exact JSON with no extra text no markdown: {"emotion":"frustrated","emoji":"😤","emotionMessage":"short empathy message","teaching":"detailed teaching response","tip":"short tip"}';
+  const prompt = `A student is studying ${subject} at ${level} level. They said: "${message}". Detect their emotion and help them. You MUST respond with ONLY this JSON object, no other text: {"emotion":"confused","emoji":"😕","emotionMessage":"I understand how you feel","teaching":"Here is my explanation","tip":"Here is my tip"}`;
   
   try {
     const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=AIzaSyCGr4hcWYZNqzGgF2Zgnd24XoLau-D1GtI', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { temperature: 0.3 }
+      })
     });
     const data = await response.json();
-    console.log('Raw:', JSON.stringify(data));
+    console.log('FULL RESPONSE:', JSON.stringify(data));
+    
+    if (!data.candidates) {
+      return res.json({ emotion: 'confused', emoji: '😕', emotionMessage: 'Let me help you!', teaching: JSON.stringify(data), tip: 'Try again!' });
+    }
+    
     const text = data.candidates[0].content.parts[0].text;
-    console.log('Text:', text);
-    const clean = text.replace(/```json|```/g, '').trim();
-    const parsed = JSON.parse(clean);
+    console.log('TEXT:', text);
+    
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      return res.json({ emotion: 'confused', emoji: '😕', emotionMessage: 'I understand!', teaching: text, tip: 'Keep going!' });
+    }
+    
+    const parsed = JSON.parse(jsonMatch[0]);
     res.json({
       emotion: parsed.emotion || 'confused',
-      emoji: parsed.emoji || '🤔',
-      emotionMessage: parsed.emotionMessage || parsed.emotion_message || parsed.message || 'I understand how you feel!',
-      teaching: parsed.teaching || parsed.response || parsed.content || 'Let me help you with this topic.',
-      tip: parsed.tip || parsed.advice || 'Keep going, you can do it!'
+      emoji: parsed.emoji || '😕',
+      emotionMessage: parsed.emotionMessage || 'I understand how you feel!',
+      teaching: parsed.teaching || 'Let me help you with this.',
+      tip: parsed.tip || 'Keep going!'
     });
   } catch (err) {
-    console.error(err);
+    console.error('ERROR:', err);
     res.status(500).json({ error: err.message });
   }
 });
