@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emotion-Aware Learning Companion</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+    .container { max-width: 800px; margin: 0 auto; }
+    h1 { text-align: center; color: white; font-size: 2rem; margin-bottom: 8px; }
+    .subtitle { text-align: center; color: rgba(255,255,255,0.8); margin-bottom: 30px; }
+    .card { background: white; border-radius: 20px; padding: 30px; margin-bottom: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+    label { font-weight: 600; color: #444; display: block; margin-bottom: 6px; }
+    input, select, textarea { width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 1rem; margin-bottom: 16px; outline: none; transition: border 0.3s; }
+    input:focus, select:focus, textarea:focus { border-color: #667eea; }
+    textarea { height: 100px; resize: none; }
+    button { width: 100%; padding: 14px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 10px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: transform 0.2s; }
+    button:hover { transform: scale(1.02); }
+    button:disabled { opacity: 0.6; cursor: not-allowed; }
+    .result { display: none; }
+    .emotion-badge { display: inline-block; padding: 8px 20px; border-radius: 50px; font-weight: 700; font-size: 1.1rem; margin-bottom: 16px; }
+    .teaching-box { background: #f8f9ff; border-left: 4px solid #667eea; padding: 16px; border-radius: 0 10px 10px 0; margin: 16px 0; line-height: 1.6; }
+    .tip-box { background: #fff8e1; border-left: 4px solid #ffc107; padding: 12px 16px; border-radius: 0 10px 10px 0; }
+    .emotion-msg { color: #555; font-style: italic; margin-bottom: 12px; }
+    .loader { text-align: center; color: #667eea; font-size: 1rem; padding: 20px; display: none; }
+    .colors-stressed { background: #ffe0e0; color: #c0392b; }
+    .colors-frustrated { background: #ffe8cc; color: #e67e22; }
+    .colors-confused { background: #e8f4f8; color: #2980b9; }
+    .colors-bored { background: #e8ffe8; color: #27ae60; }
+    .colors-happy { background: #fff3e0; color: #f39c12; }
+    .colors-confident { background: #f3e5f5; color: #8e44ad; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🧠 Emotion-Aware Learning Companion</h1>
+    <p class="subtitle">AI that understands how you feel and teaches accordingly</p>
+
+    <div class="card">
+      <label>📚 What subject are you studying?</label>
+      <input type="text" id="subject" placeholder="e.g. Mathematics, Physics, History..." />
+
+      <label>🎓 Your level</label>
+      <select id="level">
+        <option value="school student">School Student</option>
+        <option value="college student">College Student</option>
+        <option value="competitive exam student">Competitive Exam (JEE/NEET/UPSC)</option>
+      </select>
+
+      <label>💬 How are you feeling? What do you need help with?</label>
+      <textarea id="message" placeholder="e.g. I've been studying for 5 hours and I still don't understand integration. I'm so tired and frustrated..."></textarea>
+
+      <button onclick="analyze()" id="btn">✨ Get Personalized Help</button>
+      <div class="loader" id="loader">🤔 Detecting your emotion and preparing response...</div>
+    </div>
+
+    <div class="card result" id="result">
+      <div id="emotion-badge" class="emotion-badge"></div>
+      <p class="emotion-msg" id="emotion-msg"></p>
+      <div class="teaching-box" id="teaching"></div>
+      <div class="tip-box">💡 <strong>Tip:</strong> <span id="tip"></span></div>
+    </div>
+  </div>
+
+  <script>
+    async function analyze() {
+      const subject = document.getElementById('subject').value;
+      const level = document.getElementById('level').value;
+      const message = document.getElementById('message').value;
+
+      if (!subject || !message) { alert('Please fill in subject and your message!'); return; }
+
+      document.getElementById('btn').disabled = true;
+      document.getElementById('loader').style.display = 'block';
+      document.getElementById('result').style.display = 'none';
+
+      try {
+        const res = await fetch('/analyze', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message, subject, level })
+        });
+        const data = await res.json();
+
+        document.getElementById('emotion-badge').textContent = `${data.emoji} Feeling: ${data.emotion}`;
+        document.getElementById('emotion-badge').className = `emotion-badge colors-${data.emotion}`;
+        document.getElementById('emotion-msg').textContent = data.emotionMessage;
+        document.getElementById('teaching').innerHTML = data.teaching.replace(/\n/g, '<br>');
+        document.getElementById('tip').textContent = data.tip;
+        document.getElementById('result').style.display = 'block';
+      } catch (err) {
+        alert('Error: ' + err.message);
+      }
+
+      document.getElementById('btn').disabled = false;
+      document.getElementById('loader').style.display = 'none';
+    }
+  </script>
+</body>
+</html>
