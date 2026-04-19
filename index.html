@@ -56,26 +56,14 @@
     @keyframes dot { 0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; } 40% { transform: scale(1); opacity: 1; } }
     .result-card { display: none; animation: fadeUp 0.5s ease forwards; }
     .emotion-header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
-    .emotion-icon { width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; flex-shrink: 0; }
-    .emotion-info h3 { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
+    .emotion-icon { width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; flex-shrink: 0; background: rgba(124,58,237,0.15); }
+    .emotion-info h3 { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; color: var(--purple-light); }
     .emotion-info p { font-size: 0.88rem; color: var(--text-dim); line-height: 1.5; font-style: italic; }
     .section-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--purple-light); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
     .section-label::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, rgba(168,85,247,0.3), transparent); }
     .teaching-box { background: rgba(124,58,237,0.06); border: 1px solid rgba(124,58,237,0.2); border-radius: 12px; padding: 20px; margin-bottom: 16px; line-height: 1.75; font-size: 0.95rem; color: var(--text); }
     .tip-box { background: rgba(6,182,212,0.06); border: 1px solid rgba(6,182,212,0.2); border-radius: 12px; padding: 16px 20px; display: flex; align-items: flex-start; gap: 12px; font-size: 0.9rem; color: var(--text-dim); line-height: 1.6; }
     .tip-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
-    .e-stressed .emotion-icon { background: rgba(239,68,68,0.15); }
-    .e-frustrated .emotion-icon { background: rgba(249,115,22,0.15); }
-    .e-confused .emotion-icon { background: rgba(59,130,246,0.15); }
-    .e-bored .emotion-icon { background: rgba(34,197,94,0.15); }
-    .e-happy .emotion-icon { background: rgba(234,179,8,0.15); }
-    .e-confident .emotion-icon { background: rgba(168,85,247,0.15); }
-    .e-stressed .emotion-info h3 { color: #f87171; }
-    .e-frustrated .emotion-info h3 { color: #fb923c; }
-    .e-confused .emotion-info h3 { color: #60a5fa; }
-    .e-bored .emotion-info h3 { color: #4ade80; }
-    .e-happy .emotion-info h3 { color: #facc15; }
-    .e-confident .emotion-info h3 { color: #c084fc; }
     @keyframes fadeDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
   </style>
@@ -149,19 +137,28 @@
       document.getElementById('loader').style.display = 'block';
       document.getElementById('result').style.display = 'none';
       try {
-        var res = await fetch('/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: message, subject: subject, level: level }) });
+        var res = await fetch('/analyze', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: message, subject: subject, level: level })
+        });
         var data = await res.json();
-        var emotionClass = 'e-' + data.emotion;
-        var header = document.getElementById('emotion-header');
-        header.className = 'emotion-header ' + emotionClass;
-        document.getElementById('emotion-icon').textContent = data.emoji;
-        var em = data.emotion || 'unknown';
-        document.getElementById('emotion-title').textContent = 'Feeling ' + em.charAt(0).toUpperCase() + em.slice(1);
-        document.getElementById('emotion-msg').textContent = data.emotionMessage;
-        document.getElementById('teaching').innerHTML = data.teaching.replace(/\n/g, '<br>');
-        document.getElementById('tip').textContent = data.tip;
+        console.log('Data received:', JSON.stringify(data));
+        var emotion = data.emotion || 'unknown';
+        var emoji = data.emoji || '🤔';
+        var emotionMessage = data.emotionMessage || '';
+        var teaching = data.teaching || '';
+        var tip = data.tip || '';
+        document.getElementById('emotion-icon').textContent = emoji;
+        document.getElementById('emotion-title').textContent = 'Feeling ' + emotion.charAt(0).toUpperCase() + emotion.slice(1);
+        document.getElementById('emotion-msg').textContent = emotionMessage;
+        document.getElementById('teaching').innerHTML = teaching.replace(/\n/g, '<br>');
+        document.getElementById('tip').textContent = tip;
         document.getElementById('result').style.display = 'block';
-      } catch(err) { alert('Error: ' + err.message); }
+      } catch(err) {
+        console.error(err);
+        alert('Error: ' + err.message);
+      }
       document.getElementById('btn').disabled = false;
       document.getElementById('loader').style.display = 'none';
     }
